@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;">
+  <title>单词本</title>
+  <link rel="stylesheet" href="css/wordbook-popup.css">
+</head>
+<body>
+  <div class="wb-popup">
+    <div class="wb-popup-titlebar">
+      <span class="wb-popup-title">单词本</span>
+      <button id="wb-popup-close" class="wb-popup-close" title="关闭">✕</button>
+    </div>
+    <div class="wb-popup-input-row">
+      <input type="text" id="wb-popup-input" placeholder="输入单词，回车查询…" autocomplete="off" spellcheck="false">
+      <button id="wb-popup-search" class="wb-popup-search-btn">查询</button>
+    </div>
+    <div id="wb-popup-status" class="wb-popup-status"></div>
+    <div id="wb-popup-list" class="wb-popup-list"></div>
+  </div>
+  <script src="js/wordbook-popup.js"></script>
+</body>
+</html>

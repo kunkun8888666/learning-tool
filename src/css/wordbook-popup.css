@@ -1,0 +1,198 @@
+/* 单词本查词弹窗样式（置顶小窗、大圆角、仅关闭按钮） */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: transparent;
+  color: #1f2937;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.wb-popup {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.wb-popup-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, var(--wb-primary, #6366f1), var(--wb-primary-dark, #4f46e5));
+  color: #fff;
+  -webkit-app-region: drag;
+}
+
+.wb-popup-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.wb-popup-close {
+  -webkit-app-region: no-drag;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+.wb-popup-close:hover { background: rgba(255, 255, 255, 0.34); }
+
+.wb-popup-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 8px;
+}
+
+#wb-popup-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+#wb-popup-input:focus { border-color: var(--wb-primary, #6366f1); }
+
+.wb-popup-search-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--wb-primary, #6366f1);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s ease;
+}
+.wb-popup-search-btn:hover { background: var(--wb-primary-dark, #4f46e5); }
+
+.wb-popup-status {
+  padding: 0 14px 4px;
+  font-size: 0.76rem;
+  color: #6b7280;
+  min-height: 16px;
+}
+.wb-popup-status.warn { color: #d97706; }
+.wb-popup-status.error { color: #ef4444; }
+
+.wb-popup-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 10px 12px;
+}
+
+.wb-popup-empty {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  padding: 36px 0;
+}
+
+.wb-pop-card {
+  background: #f9fafb;
+  border: 1px solid #f0f0f3;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.wb-pop-word {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+.wb-pop-phonetic {
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-left: 6px;
+}
+
+.wb-pop-defs {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.wb-pop-def-zh { color: #b91c1c; }
+.wb-pop-def-en { color: #374151; }
+.wb-pop-def-empty { color: #9ca3af; }
+
+.wb-pop-examples {
+  margin-top: 6px;
+  border-top: 1px dashed #e5e7eb;
+  padding-top: 6px;
+}
+.wb-pop-ex { font-size: 0.8rem; margin-bottom: 4px; }
+.wb-pop-ex-en { color: #1f2937; }
+.wb-pop-ex-zh { color: #6b7280; }
+.wb-pop-ex-loading, .wb-pop-ex-error, .wb-pop-ex-hint { font-size: 0.76rem; padding: 6px 8px; }
+.wb-pop-ex-loading { color: #6b7280; }
+.wb-pop-ex-error { color: #ef4444; }
+.wb-pop-ex-hint { color: #9ca3af; font-style: italic; }
+
+/* 滚动条（动态响应） */
+.wb-popup-list::-webkit-scrollbar { width: 6px; }
+.wb-popup-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+.wb-popup-list::-webkit-scrollbar-track { background: transparent; }
+
+/* ===== 暗色主题（与主窗口 data-dark="true" 调色板一致） =====
+   --bg-primary:#0f172a  --bg-secondary:#1e293b  --bg-tertiary:#334155
+   --text-primary:#f1f5f9 --text-secondary:#94a3b8 --text-tertiary:#64748b
+   --border-color:#334155
+*/
+html[data-dark="true"] { color: #f1f5f9; }
+
+html[data-dark="true"] .wb-popup {
+  background: #0f172a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html[data-dark="true"] #wb-popup-input {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+html[data-dark="true"] #wb-popup-input::placeholder { color: #64748b; }
+
+html[data-dark="true"] .wb-popup-status { color: #94a3b8; }
+
+html[data-dark="true"] .wb-popup-empty,
+html[data-dark="true"] .wb-pop-def-empty,
+html[data-dark="true"] .wb-pop-ex-hint { color: #64748b; }
+
+html[data-dark="true"] .wb-pop-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html[data-dark="true"] .wb-pop-word { color: #f1f5f9; }
+html[data-dark="true"] .wb-pop-phonetic { color: #94a3b8; }
+
+html[data-dark="true"] .wb-pop-def-zh { color: #f87171; }   /* 暗底下提亮红 */
+html[data-dark="true"] .wb-pop-def-en { color: #cbd5e1; }
+
+html[data-dark="true"] .wb-pop-examples { border-top-color: #334155; }
+html[data-dark="true"] .wb-pop-ex-en { color: #e2e8f0; }
+html[data-dark="true"] .wb-pop-ex-zh { color: #94a3b8; }
+html[data-dark="true"] .wb-pop-ex-loading { color: #94a3b8; }
+
+html[data-dark="true"] .wb-popup-list::-webkit-scrollbar-thumb { background: #475569; }

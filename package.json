@@ -1,0 +1,124 @@
+{
+  "name": "learning-tool",
+  "version": "0.1.0-beta.1",
+  "description": "学习小工具 - 学生成绩追踪系统",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "generate-icon": "node generate-book-icon.js",
+    "build-icons": "node build-icons.js",
+    "clean:dist": "node scripts/clean-before-build.js",
+    "predist:win": "node scripts/clean-before-build.js",
+    "predist:mac": "node scripts/clean-before-build.js",
+    "predist:linux": "node scripts/clean-before-build.js",
+    "predist:all": "node scripts/clean-before-build.js",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux",
+    "dist:all": "electron-builder --win --mac --linux",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": {
+    "name": "学习小工具团队",
+    "email": "support@learningtool.local"
+  },
+  "build": {
+    "appId": "com.learningtool.app",
+    "productName": "学习小工具",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist"
+    },
+    "asarUnpack": [
+      "ocr/**"
+    ],
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,spec,__snapshots__,docs,benchmarks,example,examples}",
+      "!**/node_modules/*.md",
+      "!**/node_modules/*.ts",
+      "!**/node_modules/**/*.map",
+      "!.omo",
+      "!.omo/**/*",
+      "!.opencode",
+      "!.opencode/**/*",
+      "!.workbuddy",
+      "!.workbuddy/**/*",
+      "!.codegraph",
+      "!.codegraph/**/*",
+      "!.cache",
+      "!.cache/**/*",
+      "!data/settings.json",
+      "!data/user.json",
+      "!data/grades.json",
+      "!data/images/**/*",
+      "!_icons_preview",
+      "!_icons_preview/**/*",
+      "!_icons_built.json",
+      "!build-icons.js",
+      "!build-icons-write.js",
+      "!generate-book-icon.js",
+      "!CLAUDE.md",
+      "!ULTRAWORK_NOTEPAD.md",
+      "!PERFORMANCE_OPTIMIZATION_REPORT.md",
+      "!TRAY_ICON_REPORT.md",
+      "!scripts",
+      "!scripts/**/*",
+      "!lib",
+      "!lib/**/*",
+      "!启动!.bat",
+      "!*.zip"
+    ],
+    "extraResources": [
+      "assets/**/*"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "学习小工具"
+    },
+    "mac": {
+      "icon": "assets/icon-256.png"
+    },
+    "linux": {
+      "icon": "assets/icon-256.png",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/",
+      "cache": ".cache/electron"
+    }
+  },
+  "keywords": [
+    "learning",
+    "education",
+    "grades"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^4.4.8"
+  },
+  "devDependencies": {
+    "electron": "^33.4.0",
+    "electron-builder": "^26.15.3",
+    "sharp": "^0.35.3",
+    "to-ico": "^1.1.5"
+  }
+}

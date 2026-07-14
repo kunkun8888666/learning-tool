@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="blue" data-dark="false">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学习小工具</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- ====== 启动加载动画 ====== -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-icon"><i class="icon" data-icon="book"></i></div>
+      <div class="splash-title">学习小工具</div>
+      <div class="splash-spinner"><div class="spinner-ring"></div></div>
+      <div class="splash-status" id="splash-status">正在加载…</div>
+    </div>
+  </div>
+  <div id="app">
+
+    <!-- ====== 自定义标题栏（无边框窗口） ====== -->
+    <div id="titlebar" class="titlebar">
+      <div class="titlebar-drag">
+        <span class="titlebar-icon"><i class="icon" data-icon="book"></i></span>
+        <span class="titlebar-title">学习小工具</span>
+      </div>
+      <div class="titlebar-controls">
+        <button class="tb-btn" id="tb-minimize" title="最小化"><i class="icon" data-icon="minimize"></i></button>
+        <button class="tb-btn" id="tb-maximize" title="最大化"><i class="icon" data-icon="maximize"></i></button>
+        <button class="tb-btn tb-close" id="tb-close" title="关闭"><i class="icon" data-icon="close"></i></button>
+      </div>
+    </div>
+
+    <!-- ====== 首次启动向导 ====== -->
+    <div id="wizard-overlay" class="wizard-overlay hidden">
+      <div class="wizard-card">
+        <div class="wizard-header">
+          <h1><i class="icon" data-icon="book"></i> 欢迎使用学习小工具</h1>
+          <p>请先填写您的信息</p>
+        </div>
+        <div class="wizard-body">
+          <div class="form-group">
+            <label for="wizard-name">您怎么称呼？</label>
+            <input type="text" id="wizard-name" class="form-input" placeholder="请输入您的名字" maxlength="20">
+          </div>
+          <div class="form-group">
+            <label for="wizard-grade">年级</label>
+            <input type="text" id="wizard-grade" class="form-input" placeholder="例如：三年级、高一" maxlength="20">
+          </div>
+          <div class="form-group">
+            <label for="wizard-school">学校（可选）</label>
+            <input type="text" id="wizard-school" class="form-input" placeholder="例如：清华大学附属中学" maxlength="50">
+          </div>
+          <div class="form-group">
+            <label>您所在的年龄段</label>
+            <div class="age-options" id="age-options">
+              <label class="age-card" data-age="primary_low">
+                <input type="radio" name="age" value="primary_low" hidden>
+                <span class="age-icon"><i class="icon" data-icon="backpack"></i></span>
+                <span class="age-label">小学低年级</span>
+                <span class="age-desc">1-3年级</span>
+              </label>
+              <label class="age-card" data-age="primary_high">
+                <input type="radio" name="age" value="primary_high" hidden>
+                <span class="age-icon"><i class="icon" data-icon="book"></i></span>
+                <span class="age-label">小学高年级</span>
+                <span class="age-desc">4-6年级</span>
+              </label>
+              <label class="age-card" data-age="middle">
+                <input type="radio" name="age" value="middle" hidden>
+                <span class="age-icon"><i class="icon" data-icon="microscope"></i></span>
+                <span class="age-label">初中</span>
+                <span class="age-desc">7-9年级</span>
+              </label>
+              <label class="age-card" data-age="high">
+                <input type="radio" name="age" value="high" hidden>
+                <span class="age-icon"><i class="icon" data-icon="target"></i></span>
+                <span class="age-label">高中</span>
+                <span class="age-desc">10-12年级</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="wizard-footer">
+          <button id="wizard-confirm" class="btn-primary btn-large" disabled>开始使用</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 主布局 ====== -->
+    <div id="main-layout" class="main-layout hidden">
+      <!-- 左侧栏 -->
+      <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-logo"><i class="icon" data-icon="book"></i></span>
+          <span class="sidebar-title">学习小工具</span>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-menu">
+          <button class="sidebar-item active" data-page="home">
+            <span class="sidebar-icon"><i class="icon" data-icon="home"></i></span>
+            <span class="sidebar-label" data-i18n="home">主页</span>
+          </button>
+          <button class="sidebar-item" data-page="grades">
+            <span class="sidebar-icon"><i class="icon" data-icon="chartBar"></i></span>
+            <span class="sidebar-label" data-i18n="grades">成绩</span>
+          </button>
+          <button class="sidebar-item" data-page="course">
+            <span class="sidebar-icon"><i class="icon" data-icon="play"></i></span>
+            <span class="sidebar-label" data-i18n="course">课程</span>
+          </button>
+          <button class="sidebar-item" data-page="dictation">
+            <span class="sidebar-icon"><i class="icon" data-icon="edit"></i></span>
+            <span class="sidebar-label" data-i18n="dictation">听写</span>
+          </button>
+          <button class="sidebar-item hidden" data-page="wordbook" id="sidebar-wordbook">
+            <span class="sidebar-icon"><i class="icon" data-icon="book"></i></span>
+            <span class="sidebar-label">单词本</span>
+          </button>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-menu sidebar-bottom">
+          <button class="sidebar-item" data-page="settings">
+            <span class="sidebar-icon"><i class="icon" data-icon="gear"></i></span>
+            <span class="sidebar-label" data-i18n="settings">设置</span>
+          </button>
+          <button class="sidebar-item" data-page="user">
+            <span class="sidebar-icon"><i class="icon" data-icon="user"></i></span>
+            <span class="sidebar-label" data-i18n="user">用户</span>
+          </button>
+        </div>
+
+        <button id="sidebar-toggle" class="sidebar-toggle" title="收起/展开侧边栏">
+          <span class="sidebar-toggle-arrow">◀</span>
+          <span class="sidebar-toggle-label" data-i18n="collapse">收起</span>
+        </button>
+      </nav>
+
+      <!-- 主内容区 -->
+      <main id="content" class="content">
+
+        <!-- ====== 主页 ====== -->
+        <div id="page-home" class="page active">
+          <div class="greeting-section">
+            <div class="greeting-top">
+              <h1 class="greeting-text">
+                <span id="greeting-time"></span>，
+                <span id="greeting-username" class="greeting-name"></span>
+              </h1>
+            </div>
+            <p class="proverb-text" id="proverb-text">学而不思则罔，思而不学则殆。</p>
+          </div>
+
+          <!-- 总分折线图 -->
+          <div class="total-chart-section">
+            <div class="total-chart-header">
+              <h3><i class="icon" data-icon="chartLine"></i> <span data-i18n="total_score_chart">总分趋势</span></h3>
+              <div class="chart-time-filter" id="total-chart-time-filter">
+                <button class="time-filter-btn" data-range="7d">近7天</button>
+                <button class="time-filter-btn" data-range="1m">1个月</button>
+                <button class="time-filter-btn" data-range="3m">3个月</button>
+                <button class="time-filter-btn" data-range="semester">一学期</button>
+                <button class="time-filter-btn" data-range="1y">1年</button>
+                <button class="time-filter-btn" data-range="3y">3年</button>
+                <button class="time-filter-btn active" data-range="all">全部</button>
+              </div>
+            </div>
+            <div class="total-chart-wrapper">
+              <div id="total-chart-empty" class="chart-empty hidden">
+                <span class="empty-icon"><i class="icon" data-icon="note"></i></span>
+                <p data-i18n="no_data_hint">暂无成绩数据，请先在「成绩」页面添加记录</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2×4 科目小图网格 -->
+          <div class="mini-charts-section">
+            <div class="mini-charts-header">
+              <h3><i class="icon" data-icon="chartBar"></i> <span data-i18n="subject_breakdown">各科成绩</span></h3>
+            </div>
+            <div class="mini-charts-grid" id="miniChartsGrid">
+              <!-- 由 JS 动态生成 2×4 的 canvas -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 成绩页面 ====== -->
+        <div id="page-grades" class="page">
+          <div class="page-header">
+            <h2 data-i18n="grade_records"><i class="icon" data-icon="chartBar"></i> 成绩记录</h2>
+            <button id="add-grade-btn" class="btn-primary">
+              <span>+</span> <span data-i18n="add_grade">添加成绩</span>
+            </button>
+          </div>
+
+          <div class="grades-controls">
+            <div class="grade-filter">
+              <label data-i18n="filter_subject">筛选科目：</label>
+              <select id="grade-filter-subject" class="form-select">
+                <option value="all" data-i18n="all_subjects">全部科目</option>
+              </select>
+            </div>
+            <span class="grade-count" id="grade-count"></span>
+          </div>
+
+          <div id="grades-list" class="grades-list">
+            <!-- 由 JS 动态渲染 -->
+          </div>
+
+          <div id="grades-empty" class="grades-empty hidden">
+            <span class="empty-icon"><i class="icon" data-icon="note"></i></span>
+            <p data-i18n="no_grades_yet">还没有成绩记录</p>
+            <p class="text-secondary" data-i18n="add_first_grade">点击上方按钮添加第一条成绩吧！</p>
+          </div>
+        </div>
+
+        <!-- ====== 课程页面 ====== -->
+        <div id="page-course" class="page">
+          <div class="page-header">
+            <h2 data-i18n="course"><i class="icon" data-icon="play"></i> 课程</h2>
+          </div>
+
+          <div class="course-content">
+            <!-- 安装前状态 -->
+            <div id="course-not-installed" class="course-status-card">
+              <div class="course-status-icon"><i class="icon" data-icon="sparkle" style="font-size:2.5rem;"></i></div>
+              <h3 data-i18n="course_not_installed_title">OpenMAIC 课程系统</h3>
+              <p data-i18n="course_not_installed_desc">清华大学开源多智能体互动课堂平台，可从任何主题自动生成沉浸式 AI 课程。</p>
+              <div id="course-install-progress" class="course-progress hidden">
+                <div class="course-progress-bar"><div id="course-progress-fill" class="course-progress-fill"></div></div>
+                <p id="course-progress-label" class="course-progress-label"></p>
+              </div>
+              <button id="course-install-btn" class="btn-primary btn-large" data-i18n="course_install_btn">下载并安装</button>
+              <p class="settings-hint" data-i18n="course_install_hint">需要 Node.js 20+ 和 pnpm，安装过程约需几分钟。</p>
+            </div>
+
+            <!-- 已安装但未运行 -->
+            <div id="course-installed-stopped" class="course-status-card hidden">
+              <div class="course-status-icon"><i class="icon" data-icon="bolt" style="font-size:2.5rem;"></i></div>
+              <h3 data-i18n="course_ready_title">课程已就绪</h3>
+              <p data-i18n="course_ready_desc">OpenMAIC 已安装，点击下方按钮启动互动课堂服务。</p>
+              <button id="course-start-btn" class="btn-primary btn-large" data-i18n="course_start_btn">启动课程</button>
+            </div>
+
+            <!-- 正在启动 -->
+            <div id="course-starting" class="course-status-card hidden">
+              <div class="course-status-icon"><i class="icon" data-icon="clock" style="font-size:2.5rem;"></i></div>
+              <h3 data-i18n="course_starting_title">正在启动…</h3>
+              <p data-i18n="course_starting_desc">课程服务启动中，请稍候。</p>
+              <div class="course-progress">
+                <div class="course-progress-bar"><div id="course-start-progress-fill" class="course-progress-fill" style="width:60%;animation:pulse-progress 1.5s ease-in-out infinite;"></div></div>
+              </div>
+            </div>
+
+            <!-- 运行中 — 全屏 webview -->
+            <div id="course-running" class="course-fullscreen hidden">
+              <div class="course-running-toolbar">
+                <button id="course-stop-btn" class="btn-danger btn-small" data-i18n="course_stop_btn">停止服务</button>
+              </div>
+              <webview id="course-webview" src="about:blank" class="course-webview"
+                webpreferences="javascript=yes,contextIsolation=no,nodeIntegration=no,spellcheck=no,enableWebSQL=no,scrollBounce=no,nativeWindowOpen=no"
+                partition="persist:openmaic"
+                allowpopups
+              ></webview>
+            </div>
+
+            <!-- 安装/启动失败 -->
+            <div id="course-error" class="course-status-card hidden">
+              <div class="course-status-icon"><i class="icon" data-icon="error" style="font-size:2.5rem;"></i></div>
+              <h3 data-i18n="course_error_title">出错了</h3>
+              <p id="course-error-msg" class="course-error-msg"></p>
+              <button id="course-retry-btn" class="btn-primary btn-large" data-i18n="course_retry_btn">重新尝试</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 听写页面 ====== -->
+        <div id="page-dictation" class="page">
+          <div class="page-header">
+            <h2 data-i18n="dictation"><i class="icon" data-icon="edit"></i> 听写练习</h2>
+          </div>
+
+          <div class="dictation-content">
+            <div class="dictation-upload-section">
+              <div class="upload-area" id="dictation-upload-area">
+                <input type="file" id="dictation-file-input" accept="image/*" multiple hidden>
+                <div class="upload-icon"><i class="icon" data-icon="image"></i></div>
+                <p class="upload-text">点击或拖拽上传单词表图片</p>
+                <p class="upload-hint">支持多张 JPG、PNG 格式，可排序</p>
+              </div>
+              <div id="dictation-preview-list" class="dictation-preview-list hidden">
+                <!-- 多张图片预览由 JS 动态生成 -->
+              </div>
+            </div>
+
+            <div class="dictation-control-section">
+              <button id="dictation-ocr-btn" class="btn-primary btn-large" disabled>
+                <i class="icon" data-icon="scan"></i> OCR 识别单词
+              </button>
+              <div id="dictation-ocr-loading" class="loading-overlay hidden">
+                <div class="loading-spinner"></div>
+                <p>正在识别中…</p>
+              </div>
+            </div>
+
+            <div id="dictation-words-section" class="dictation-words-section hidden">
+              <div class="dictation-stats">
+                <span>共 <strong id="dictation-total-count">0</strong> 个单词</span>
+                <span>当前 <strong id="dictation-current-index">1</strong> / <strong id="dictation-total">0</strong></span>
+              </div>
+
+              <div class="dictation-word-card">
+                <div class="word-display">
+                  <span id="dictation-current-word" class="word-text">---</span>
+                  <span id="dictation-current-phonetic" class="word-phonetic"></span>
+                  <span id="dictation-current-meaning" class="word-meaning"></span>
+                  <span id="dictation-current-page" class="word-page"></span>
+                  <button id="dictation-play-btn" class="btn-primary btn-small">
+                    <i class="icon" data-icon="play"></i> 朗读
+                  </button>
+                </div>
+                <div class="word-controls">
+                  <button id="dictation-reveal-btn" class="btn-secondary btn-small">
+                    显示答案
+                  </button>
+                  <button id="dictation-prev-btn" class="btn-secondary btn-small" disabled>
+                    <i class="icon" data-icon="prev"></i> 上一个
+                  </button>
+                  <button id="dictation-next-btn" class="btn-secondary btn-small" disabled>
+                    <i class="icon" data-icon="next"></i> 下一个
+                  </button>
+                </div>
+              </div>
+
+              <div class="dictation-words-list">
+                <h4>单词列表</h4>
+                <div id="dictation-words-container" class="words-list-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 单词本页面 ====== -->
+        <div id="page-wordbook" class="page">
+          <div class="page-header">
+            <h2><i class="icon" data-icon="book"></i> 单词本</h2>
+          </div>
+
+          <div class="wordbook-toolbar">
+            <div class="wordbook-search">
+              <svg class="wb-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="wb-search-input" class="form-input" placeholder="搜索单词…" autocomplete="off">
+            </div>
+            <div class="wordbook-filter" id="wb-filter">
+              <button class="setting-btn active" data-wb-filter="all">全部</button>
+              <button class="setting-btn" data-wb-filter="favorite">收藏</button>
+            </div>
+          </div>
+
+          <div id="wb-list" class="wordbook-list"></div>
+
+          <div id="wb-empty" class="wordbook-empty hidden">
+            <span class="empty-icon"><i class="icon" data-icon="book"></i></span>
+            <p>还没有查过的单词</p>
+            <p class="text-secondary">按 Ctrl+G 打开查词弹窗，或在上方输入框查询</p>
+          </div>
+        </div>
+
+        <!-- ====== 设置页面 ====== -->
+        <div id="page-settings" class="page">
+          <div class="page-header">
+            <h2 data-i18n="settings"><i class="icon" data-icon="gear"></i> 设置</h2>
+          </div>
+
+          <div class="settings-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="globe"></i></span>
+                <h3 data-i18n="language">语言</h3>
+              </div>
+              <div class="settings-options" id="language-options">
+                <button class="setting-btn" data-lang="zh">中文</button>
+                <button class="setting-btn" data-lang="en">English</button>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="palette"></i></span>
+                <h3 data-i18n="theme_color">主题色</h3>
+              </div>
+              <div class="theme-colors" id="theme-colors">
+                <button class="color-btn" data-color="blue" style="background: #3b82f6" title="天蓝"></button>
+                <button class="color-btn" data-color="green" style="background: #10b981" title="翠绿"></button>
+                <button class="color-btn" data-color="orange" style="background: #f59e0b" title="橙色"></button>
+                <button class="color-btn" data-color="purple" style="background: #8b5cf6" title="紫色"></button>
+                <button class="color-btn" data-color="pink" style="background: #ec4899" title="粉色"></button>
+                <button class="color-btn" data-color="indigo" style="background: #6366f1" title="靛蓝"></button>
+                <button class="color-btn" data-color="red" style="background: #ef4444" title="红色"></button>
+                <button class="color-btn" data-color="teal" style="background: #14b8a6" title="青绿"></button>
+              </div>
+              <p class="settings-hint" data-i18n="theme_hint">选择您喜欢的主题色</p>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="sun"></i></span>
+                <h3 data-i18n="appearance">外观</h3>
+              </div>
+              <div class="setting-toggle-row">
+                <span data-i18n="dark_mode">深色模式</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="dark-mode-toggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="audio-lines"></i></span>
+                <h3 data-i18n="tts_settings">语音设置</h3>
+              </div>
+              <div class="setting-range-row">
+                <span data-i18n="tts_rate">语速</span>
+                <div class="range-control">
+                  <input type="range" id="tts-rate-slider" min="0.5" max="1.5" step="0.1" value="0.8">
+                  <span id="tts-rate-value" class="range-value">0.8</span>
+                </div>
+              </div>
+              <div class="setting-select-row">
+                <span data-i18n="tts_voice">朗读声音</span>
+                <div class="voice-control">
+                  <select id="tts-voice-select" class="form-input" style="width:auto;max-width:220px;">
+                    <option value="">默认（自动选择）</option>
+                  </select>
+                  <button id="tts-test-btn" class="btn-primary btn-small" title="试听当前声音">
+                    <i class="icon" data-icon="play"></i> 试听
+                  </button>
+                </div>
+              </div>
+              <p class="settings-hint">选择不同的语音角色，含中文和英文选项</p>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="robot"></i></span>
+                <h3 data-i18n="ai_settings">AI 设置</h3>
+                <button type="button" class="btn-primary btn-small" id="ai-add-config-btn" style="margin-left:auto;">+ <span data-i18n="ai_add_config">添加 AI</span></button>
+              </div>
+
+              <div class="ai-configs-list" id="ai-configs-list">
+                <!-- 由 JS 动态渲染 -->
+              </div>
+
+              <!-- 预置服务商 -->
+              <div class="ai-providers" id="ai-providers">
+                <h4 class="ai-providers-title" data-i18n="ai_providers_title">提供商</h4>
+                <div class="ai-providers-list" id="ai-providers-list">
+                  <!-- 由 JS 动态渲染 -->
+                </div>
+                <button type="button" class="ai-providers-toggle hidden" id="ai-providers-toggle">
+                  <span data-i18n="ai_providers_more">查看更多提供商</span>
+                </button>
+                <p class="settings-hint ai-providers-hint" data-i18n="ai_providers_hint">点击「连接」预填配置后填入 API 密钥即可使用。</p>
+              </div>
+
+              <div class="settings-hint" data-i18n="ai_prompt_hint">进入详情页时，AI 会自动使用此提示词分析成绩。</div>
+
+              <div class="ai-prompt-section">
+                <div class="ai-prompt-header">
+                  <span class="ai-prompt-title" data-i18n="ai_default_prompt">默认提示词</span>
+                  <button type="button" class="btn-secondary btn-small" id="ai-reset-prompt-btn" data-i18n="ai_reset_prompt">恢复默认</button>
+                </div>
+                <textarea id="ai-prompt-input" class="ai-prompt-textarea" rows="8" placeholder=""></textarea>
+              </div>
+
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="book"></i></span>
+                <h3>单词本</h3>
+                <label class="toggle-switch" style="margin-left:auto;" title="启用单词本">
+                  <input type="checkbox" id="wordbook-enable-toggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="download-setting-group">
+                <div class="download-setting-item">
+                  <label>全局快捷键（打开查词弹窗）</label>
+                  <div class="wordbook-shortcut-row">
+                    <code id="wordbook-shortcut-label" class="wordbook-shortcut-label">Ctrl+G</code>
+                    <button type="button" class="btn-secondary btn-small" id="wordbook-shortcut-btn">重新绑定</button>
+                  </div>
+                  <p class="settings-hint">默认 Ctrl+G；启用后按此快捷键弹出置顶查词窗口。</p>
+                </div>
+                <div class="download-setting-item">
+                  <label>释义模式</label>
+                  <div class="download-source-options" id="wordbook-mode-options">
+                    <button class="setting-btn" data-mode="zh">中文释义</button>
+                    <button class="setting-btn" data-mode="en">英文释义</button>
+                    <button class="setting-btn" data-mode="both">中英释义</button>
+                  </div>
+                  <p class="settings-hint">决定查词时显示的释义语言。</p>
+                </div>
+                <div class="download-setting-item">
+                  <label for="wordbook-apikey">翻译 API Key（uapis.cn）</label>
+                  <input type="text" id="wordbook-apikey" class="form-input" placeholder="可选，不填使用免费额度（4积分/次）">
+                  <p class="settings-hint">填入后可获得更大调用配额。<a href="https://uapis.cn" target="_blank">前往 uapis.cn 注册获取 →</a></p>
+                </div>
+                <div class="download-setting-item">
+                  <label for="wordbook-example-count">AI 例句数量</label>
+                  <div class="download-source-options" id="wordbook-example-options">
+                    <button class="setting-btn" data-count="1">1 条</button>
+                    <button class="setting-btn active" data-count="3">3 条（默认）</button>
+                    <button class="setting-btn" data-count="5">5 条</button>
+                  </div>
+                  <p class="settings-hint">每次查询时 AI 生成的例句数量，越多越消耗 AI 额度。</p>
+                </div>
+                <p class="settings-hint" id="wordbook-ai-hint">例句由 AI 生成，请在「AI 设置」中配置并激活一个 AI。</p>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="audio-lines"></i></span>
+                <h3 data-i18n="ocr_settings">OCR 文字识别</h3>
+              </div>
+
+              <div class="ocr-setting-group">
+                <div class="ocr-status" id="ocr-status">
+                  <span class="ocr-status-icon" id="ocr-status-icon"></span>
+                  <span class="ocr-status-text" id="ocr-status-text">未检测到 OCR 服务</span>
+                </div>
+                <div class="ocr-actions">
+                  <button type="button" class="btn-primary btn-small" id="ocr-start-btn" data-i18n="ocr_start">启动 OCR 服务</button>
+                  <button type="button" class="btn-secondary btn-small" id="ocr-stop-btn" data-i18n="ocr_stop">停止 OCR 服务</button>
+                </div>
+                <p class="settings-hint" data-i18n="ocr_hint">首次启动会自动安装 EasyOCR（约 1GB），支持中英文识别。</p>
+              </div>
+
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="download"></i></span>
+                <h3 data-i18n="download_settings">下载设置</h3>
+              </div>
+
+              <div class="download-setting-group">
+                <div class="download-setting-item">
+                  <label for="download-speed-limit" data-i18n="download_speed_limit">下载限速</label>
+                  <div class="download-speed-control">
+                    <input type="range" id="download-speed-limit" min="0" max="100" step="1" value="0">
+                    <span id="download-speed-value">无限制</span>
+                  </div>
+                  <p class="settings-hint" data-i18n="download_speed_hint">0 表示无限制，单位：MB/s</p>
+                </div>
+
+                <div class="download-setting-item">
+                  <label for="download-threads" data-i18n="download_threads">下载线程数</label>
+                  <div class="download-thread-control">
+                    <input type="range" id="download-threads" min="1" max="16" step="1" value="4">
+                    <span id="download-threads-value">4</span>
+                  </div>
+                  <p class="settings-hint" data-i18n="download_threads_hint">多线程下载可提升速度，建议根据网络情况调整</p>
+                </div>
+
+                <div class="download-setting-item">
+                  <label data-i18n="download_source">下载源</label>
+                  <div class="download-source-options" id="download-source-options">
+                    <button class="setting-btn" data-source="original">原版</button>
+                    <button class="setting-btn active" data-source="ghproxy">gh-proxy.org</button>
+                    <button class="setting-btn" data-source="custom">自定义</button>
+                  </div>
+                  <div class="download-custom-source hidden" id="download-custom-source">
+                    <input type="text" id="download-custom-url" class="form-input" placeholder="输入自定义镜像地址">
+                    <p class="settings-hint" data-i18n="download_custom_hint">如：https://gh-proxy.org</p>
+                  </div>
+                </div>
+
+                <div class="download-setting-divider"></div>
+
+                <div class="download-setting-item download-setting-clear-cache">
+                  <button type="button" class="btn-danger btn-small" id="clear-cache-btn" data-i18n="clear_cache">清除缓存</button>
+                  <p class="settings-hint" data-i18n="clear_cache_hint">清除下载的临时文件和缓存数据</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <span class="settings-icon"><i class="icon" data-icon="download"></i></span>
+                <h3>数据备份与还原</h3>
+              </div>
+              <div class="download-setting-group">
+                <div class="download-setting-item">
+                  <label>数据备份</label>
+                  <button type="button" class="btn-primary btn-small" id="backup-btn">备份数据</button>
+                  <p class="settings-hint">将历史成绩、软件设置和 OpenMAIC 登录状态导出为备份文件，保存到您指定的位置。</p>
+                </div>
+                <div class="download-setting-divider"></div>
+                <div class="download-setting-item">
+                  <label>数据还原</label>
+                  <button type="button" class="btn-secondary btn-small" id="restore-btn">还原数据</button>
+                  <p class="settings-hint">从备份文件恢复历史成绩、软件设置和 OpenMAIC 登录状态（将覆盖当前数据）。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 用户页面 ====== -->
+        <div id="page-user" class="page">
+          <div class="page-header">
+            <h2 data-i18n="user"><i class="icon" data-icon="user"></i> 用户</h2>
+          </div>
+
+          <div class="user-content">
+            <div class="user-card">
+              <div class="user-avatar-wrapper" id="user-avatar-wrapper">
+                <div class="user-avatar-large" id="user-avatar-display">
+                  <i class="icon" data-icon="user"></i>
+                </div>
+              </div>
+              <h2 class="user-name" id="user-name-display">-</h2>
+              <div class="user-details">
+                <div class="user-detail-row">
+                  <span class="detail-label"><i class="icon" data-icon="user"></i> <span data-i18n="username">用户名</span></span>
+                  <span class="detail-value" id="user-name">-</span>
+                </div>
+                <div class="user-detail-row">
+                  <span class="detail-label"><i class="icon" data-icon="backpack"></i> <span data-i18n="age_group">年龄段</span></span>
+                  <span class="detail-value" id="user-age-group">-</span>
+                </div>
+                <div class="user-detail-row">
+                  <span class="detail-label"><i class="icon" data-icon="book"></i> <span data-i18n="grade">年级</span></span>
+                  <span class="detail-value" id="user-grade">-</span>
+                </div>
+                <div class="user-detail-row">
+                  <span class="detail-label"><i class="icon" data-icon="globe"></i> <span data-i18n="school">学校</span></span>
+                  <span class="detail-value" id="user-school">-</span>
+                </div>
+              </div>
+              <button id="edit-user-btn" class="btn-primary btn-block">
+                <i class="icon" data-icon="edit"></i> <span data-i18n="edit_info">编辑信息</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ====== 添加/编辑成绩页面 ====== -->
+        <div id="page-add-grade" class="page">
+          <div class="page-header">
+            <button class="btn-secondary page-back-btn" id="grade-back-btn">← 返回</button>
+            <h2 id="page-add-grade-title">添加成绩</h2>
+            <div></div>
+          </div>
+
+          <div class="add-grade-layout" id="add-grade-layout">
+            <div class="add-grade-main">
+              <div class="add-grade-sidebar">
+                <div class="add-grade-sidebar-card">
+                  <h3><i class="icon" data-icon="bulb"></i> <span data-i18n="tip_title">提示</span></h3>
+                  <p>选择考试类型和科目，填写分数后点击保存。</p>
+                  <ul>
+                    <li><strong>小考</strong>：单科目成绩录入</li>
+                    <li><strong>大考</strong>：多科目一次性录入</li>
+                  </ul>
+                  <p class="add-grade-sidebar-tip">点击科目旁的 ▼ 可在侧面板编辑小题分和上传图片。</p>
+                </div>
+              </div>
+              <div class="add-grade-card">
+              <form id="grade-form" novalidate>
+                <input type="hidden" id="grade-edit-id" value="">
+                <input type="hidden" id="grade-exam-type" value="minor">
+                <input type="hidden" id="grade-group-id" value="">
+
+                <!-- 考试类型切换 -->
+                <div class="exam-type-group" id="exam-type-toggle">
+                  <button type="button" class="exam-type-btn active" data-exam-type="minor"><i class="icon" data-icon="note"></i> <span data-i18n="exam_type_minor">小考</span></button>
+                  <button type="button" class="exam-type-btn" data-exam-type="major"><i class="icon" data-icon="clipboard"></i> <span data-i18n="exam_type_major">大考</span></button>
+                </div>
+
+                <!-- 小考：单科目输入 -->
+                <div id="minor-exam-fields">
+                  <div class="form-group">
+                    <label for="grade-subject">科目</label>
+                    <select id="grade-subject" class="form-select" required></select>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group flex-1">
+                      <label for="grade-score">分数</label>
+                      <input type="number" id="grade-score" class="form-input" min="0" max="1000" required>
+                      <small class="form-error hidden" id="score-error">分数不能超过满分！</small>
+                    </div>
+                    <div class="form-group flex-1">
+                      <label for="grade-total">满分</label>
+                      <input type="number" id="grade-total" class="form-input" value="100" min="1" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 大考：多科目输入 -->
+                <div id="major-exam-fields" class="hidden">
+                  <label style="display:block;margin-bottom:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);">各科成绩</label>
+                  <div id="major-subjects-list" class="major-subjects-list"></div>
+                </div>
+
+                <!-- 小题分（通用） -->
+                <div class="form-section-divider"></div>
+                <div class="sub-score-toggle">
+                  <button type="button" class="btn-secondary btn-small" id="toggle-sub-scores">
+                    + <span data-i18n="add_sub_scores">添加小题分</span>
+                  </button>
+                </div>
+                <div id="sub-scores-section" class="sub-scores-section hidden">
+                  <label style="display:block;margin-bottom:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);" data-i18n="sub_scores">小题分</label>
+                  <div id="sub-scores-list" class="sub-scores-list">
+                    <!-- One row by default when visible -->
+                  </div>
+                  <button type="button" class="btn-secondary btn-small" id="add-sub-score-row" data-i18n="add_row">添加一行</button>
+                </div>
+
+                <!-- 公共字段 -->
+                <div class="form-group">
+                  <label for="grade-exam">考试名称</label>
+                  <input type="text" id="grade-exam" class="form-input" placeholder="如：期中考试">
+                </div>
+
+                <div class="form-group">
+                  <label for="grade-date">日期</label>
+                  <input type="date" id="grade-date" class="form-input" required>
+                </div>
+
+                <!-- 总分排名（仅大考） -->
+                <div id="total-rank-fields" class="hidden">
+                  <div class="form-section-divider"></div>
+                  <label style="display:block;margin-bottom:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);">总分排名</label>
+                  <div class="form-row">
+                    <div class="form-group flex-1">
+                      <label for="total-class-rank">班级排名</label>
+                      <input type="number" id="total-class-rank" class="form-input" min="1" placeholder="名">
+                    </div>
+                    <div class="form-group flex-1">
+                      <label for="total-class-total">班级总人数</label>
+                      <input type="number" id="total-class-total" class="form-input" min="1" placeholder="人">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group flex-1">
+                      <label for="total-grade-rank">年级排名</label>
+                      <input type="number" id="total-grade-rank" class="form-input" min="1" placeholder="名">
+                    </div>
+                    <div class="form-group flex-1">
+                      <label for="total-grade-total">年级总人数</label>
+                      <input type="number" id="total-grade-total" class="form-input" min="1" placeholder="人">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 图片上传 -->
+                <div class="form-section-divider"></div>
+                <div class="image-upload-section">
+                  <button type="button" class="btn-secondary btn-small" id="upload-image-btn">
+                    <i class="icon" data-icon="camera"></i> <span data-i18n="upload_image">上传图片</span>
+                  </button>
+                  <div id="image-preview-list" class="image-preview-list"></div>
+                  <input type="file" id="image-file-input" accept="image/*" multiple style="display:none">
+                </div>
+
+                <div class="add-grade-actions">
+                  <button type="button" class="btn-secondary" id="grade-cancel-btn">取消</button>
+                  <button type="submit" class="btn-primary" id="grade-save-btn">保存</button>
+                </div>
+              </form>
+            </div>
+            </div>
+
+            <!-- ====== 科目编辑侧面板（大考用） ====== -->
+            <div id="subject-edit-panel" class="subject-edit-panel hidden">
+              <div class="panel-header">
+                <h3 id="panel-subject-name">科目</h3>
+                <button type="button" class="panel-close-btn" id="panel-close-btn">×</button>
+              </div>
+              <div class="panel-body">
+                <!-- 小题分 -->
+                <div class="panel-section">
+                  <div class="panel-section-header">
+                    <span data-i18n="sub_scores">小题分</span>
+                    <button type="button" class="btn-secondary btn-small" id="btn-panel-add-sub-score">+ 添加</button>
+                  </div>
+                  <div id="panel-sub-scores-list" class="panel-sub-scores-list"></div>
+                </div>
+                <!-- 图片 -->
+                <div class="panel-section">
+                  <div class="panel-section-header">
+                    <span data-i18n="upload_image">上传图片</span>
+                    <button type="button" class="btn-secondary btn-small" id="btn-panel-upload-image"><i class="icon" data-icon="camera"></i> 上传</button>
+                  </div>
+                  <div id="panel-image-preview-list" class="image-preview-list"></div>
+                  <input type="file" id="panel-image-file-input" accept="image/*" multiple style="display:none">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 成绩详情页 ====== -->
+        <div id="page-grade-detail" class="page">
+          <div class="page-header">
+            <button class="btn-secondary page-back-btn" id="detail-back-btn">← 返回</button>
+            <h2 id="detail-page-title" data-i18n="grade_detail">成绩详情</h2>
+            <div></div>
+          </div>
+
+          <div class="detail-with-ai-layout">
+            <div class="detail-card" id="detail-card">
+              <!-- Header: exam name, date, type badge -->
+              <div class="detail-header" id="detail-header"></div>
+
+              <!-- Stats row: total score, average, subject count -->
+              <div class="detail-stats" id="detail-stats"></div>
+
+              <!-- Subjects list section -->
+              <div id="detail-subjects-section" class="detail-section">
+                <h3 data-i18n="subject_scores">各科成绩</h3>
+                <div id="detail-subjects-list"></div>
+              </div>
+
+              <!-- Sub-scores section (hidden by default) -->
+              <div id="detail-sub-scores-section" class="detail-section hidden">
+                <h3 data-i18n="sub_scores">小题分</h3>
+                <div id="detail-sub-scores-table"></div>
+              </div>
+
+              <!-- Images section (hidden by default) -->
+              <div id="detail-images-section" class="detail-section hidden">
+                <h3 data-i18n="uploaded_images">上传图片</h3>
+                <div id="detail-images-gallery"></div>
+              </div>
+
+              <!-- Actions -->
+              <div class="detail-actions">
+                <button class="btn-primary" id="detail-edit-btn" data-i18n="edit_grade">编辑</button>
+                <button class="btn-danger" id="detail-delete-btn" data-i18n="delete_grade">删除</button>
+              </div>
+            </div>
+            <div class="ai-chat-slot" data-ai-context="grade-detail"></div>
+          </div>
+        </div>
+
+        <!-- ====== 科目详情页（大考单科点击） ====== -->
+        <div id="page-subject-detail" class="page">
+          <div class="page-header">
+            <button class="btn-secondary page-back-btn" id="subject-detail-back-btn">← 返回</button>
+            <h2 id="subject-detail-title" data-i18n="subject_detail">科目详情</h2>
+            <div></div>
+          </div>
+
+          <div class="subject-detail-layout">
+            <div class="subject-detail-main" id="subject-detail-card">
+              <!-- 由 JS 动态渲染 -->
+            </div>
+            <div class="subject-detail-sidebar">
+              <div class="ai-chat-slot" data-ai-context="subject-detail"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ====== 编辑用户模态框 ====== -->
+    <div id="user-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 data-i18n="edit_info">编辑个人信息</h3>
+          <button class="modal-close-btn" id="user-modal-close">&times;</button>
+        </div>
+        <form id="user-form">
+          <div class="user-avatar-edit">
+            <div class="user-avatar-preview" id="user-avatar-preview">
+              <i class="icon" data-icon="user"></i>
+            </div>
+            <button type="button" class="btn-secondary btn-sm" id="avatar-upload-btn">
+              <i class="icon" data-icon="camera"></i> <span data-i18n="change_avatar">更换头像</span>
+            </button>
+            <input type="file" id="avatar-input" accept="image/*" hidden>
+          </div>
+          <div class="form-group">
+            <label for="edit-username" data-i18n="username">用户名</label>
+            <input type="text" id="edit-username" class="form-input" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-grade" data-i18n="grade">年级</label>
+            <input type="text" id="edit-grade" class="form-input" placeholder="例如：三年级、高一" maxlength="20">
+          </div>
+          <div class="form-group">
+            <label for="edit-school" data-i18n="school">学校</label>
+            <input type="text" id="edit-school" class="form-input" placeholder="例如：清华大学附属中学" maxlength="50">
+          </div>
+          <div class="form-group">
+            <label data-i18n="age_group">年龄段</label>
+            <div class="age-options" id="edit-age-options">
+              <label class="age-card" data-age="primary_low">
+                <input type="radio" name="edit-age" value="primary_low" hidden>
+                <span class="age-icon"><i class="icon" data-icon="backpack"></i></span>
+                <span class="age-label" data-i18n="primary_low">小学低年级</span>
+              </label>
+              <label class="age-card" data-age="primary_high">
+                <input type="radio" name="edit-age" value="primary_high" hidden>
+                <span class="age-icon"><i class="icon" data-icon="book"></i></span>
+                <span class="age-label" data-i18n="primary_high">小学高年级</span>
+              </label>
+              <label class="age-card" data-age="middle">
+                <input type="radio" name="edit-age" value="middle" hidden>
+                <span class="age-icon"><i class="icon" data-icon="microscope"></i></span>
+                <span class="age-label" data-i18n="middle_school">初中</span>
+              </label>
+              <label class="age-card" data-age="high">
+                <input type="radio" name="edit-age" value="high" hidden>
+                <span class="age-icon"><i class="icon" data-icon="target"></i></span>
+                <span class="age-label" data-i18n="high_school">高中</span>
+              </label>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="user-modal-cancel" data-i18n="cancel">取消</button>
+            <button type="submit" class="btn-primary" data-i18n="save">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====== AI 配置编辑模态框 ====== -->
+    <div id="ai-config-modal" class="modal-overlay hidden">
+      <div class="modal-card ai-config-modal-card">
+        <div class="modal-header">
+          <h3 id="ai-config-modal-title" data-i18n="ai_add_config">添加 AI</h3>
+          <button class="modal-close-btn" id="ai-config-modal-close">&times;</button>
+        </div>
+        <form id="ai-config-form">
+          <input type="hidden" id="ai-config-id" value="">
+          <div class="form-group">
+            <label for="ai-config-name" data-i18n="ai_config_name">名称</label>
+            <input type="text" id="ai-config-name" class="form-input" maxlength="30" placeholder="例如：GPT-4o 默认" required>
+          </div>
+          <div class="form-group">
+            <label data-i18n="ai_config_type">类型</label>
+            <div class="ai-type-options" id="ai-type-options">
+              <label class="ai-type-card" data-type="openai">
+                <input type="radio" name="ai-type" value="openai" hidden checked>
+                <span class="ai-type-name" data-i18n="ai_openai">OpenAI 兼容</span>
+                <span class="ai-type-hint">GPT-4o / DeepSeek / 通义千问等</span>
+              </label>
+              <label class="ai-type-card" data-type="gemini">
+                <input type="radio" name="ai-type" value="gemini" hidden>
+                <span class="ai-type-name" data-i18n="ai_gemini">Google Gemini</span>
+                <span class="ai-type-hint">gemini-1.5-flash 等</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ai-config-apikey" data-i18n="ai_config_apikey">API Key</label>
+            <input type="password" id="ai-config-apikey" class="form-input" placeholder="sk-..." required>
+          </div>
+          <div class="form-group" id="ai-config-baseurl-group">
+            <label for="ai-config-baseurl" data-i18n="ai_config_baseurl">Base URL（可选）</label>
+            <input type="text" id="ai-config-baseurl" class="form-input" placeholder="https://api.openai.com/v1">
+            <small class="settings-hint" id="ai-config-baseurl-hint" data-i18n="ai_config_baseurl_hint">OpenAI 类型必填留空用官方；Gemini 中转站时填入对应地址。</small>
+          </div>
+          <div class="form-group">
+            <label for="ai-config-model" data-i18n="ai_config_model">模型</label>
+            <div class="ai-model-row">
+              <input type="text" id="ai-config-model" class="form-input" placeholder="gpt-4o-mini" required>
+              <button type="button" class="btn-secondary btn-small" id="ai-fetch-models-btn" title="自动查询可用模型列表">🔍 查询模型</button>
+            </div>
+            <select id="ai-model-select" class="form-input hidden" size="5" style="margin-top:6px;"></select>
+            <small class="settings-hint" id="ai-models-hint"></small>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="ai-config-cancel-btn" data-i18n="ai_config_cancel">取消</button>
+            <button type="button" class="btn-danger hidden" id="ai-config-delete-btn" data-i18n="ai_config_delete">删除</button>
+            <button type="submit" class="btn-primary" data-i18n="ai_config_save">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====== AI 对话框模板（三个详情页共用） ====== -->
+    <template id="ai-chat-panel-template">
+      <div class="ai-chat-panel">
+        <div class="ai-chat-header">
+          <div class="ai-chat-header-left">
+            <span class="ai-chat-icon"><i class="icon" data-icon="robot"></i></span>
+            <span class="ai-chat-title" data-i18n="ai_assistant">AI 助手</span>
+          </div>
+          <div class="ai-chat-header-right">
+            <select class="ai-chat-config-select" title="选择 AI"></select>
+            <button class="ai-chat-action-btn ai-chat-clear-btn" title="清空对话"><i class="icon" data-icon="trash"></i></button>
+          </div>
+        </div>
+        <div class="ai-chat-messages">
+          <div class="ai-chat-empty hidden"></div>
+        </div>
+        <div class="ai-chat-input-area">
+          <textarea class="ai-chat-input" rows="2" placeholder=""></textarea>
+          <button class="ai-chat-send-btn">
+            <span class="ai-chat-send-text" data-i18n="ai_send">发送</span>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- ====== 自定义关闭确认框（替代原生 dialog） ====== -->
+    <div id="close-confirm-overlay" class="close-confirm-overlay hidden">
+      <div class="close-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="close-confirm-title">
+        <div class="close-confirm-header">
+          <span class="close-confirm-icon"><i class="icon" data-icon="info"></i></span>
+          <h3 id="close-confirm-title" class="close-confirm-title">关闭确认</h3>
+          <span class="close-confirm-desc">你希望关闭应用还是最小化到系统托盘？</span>
+        </div>
+        <p class="close-confirm-detail">最小化到托盘后，应用将在后台继续运行，下次点击托盘图标即可打开。</p>
+        <div class="close-confirm-actions">
+          <button class="btn-close-confirm btn-close-minimize" id="close-confirm-minimize">
+            <i class="icon" data-icon="minimize"></i> 最小化到托盘
+          </button>
+          <button class="btn-close-confirm btn-close-quit" id="close-confirm-quit">
+            <i class="icon" data-icon="close"></i> 关闭应用
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 通用 Element 风格确认弹窗（替代 confirm() / 原生 dialog） ====== -->
+    <div id="el-confirm-overlay" class="el-confirm-overlay hidden">
+      <div class="el-confirm-dialog" role="dialog" aria-modal="true">
+        <div class="el-confirm-header">
+          <span class="el-confirm-title" id="el-confirm-title">提示</span>
+          <button class="el-confirm-close-btn" id="el-confirm-close">&times;</button>
+        </div>
+        <p class="el-confirm-message" id="el-confirm-message"></p>
+        <div class="el-confirm-actions">
+          <button class="btn-secondary el-confirm-cancel" id="el-confirm-cancel">取消</button>
+          <button class="btn-primary el-confirm-ok" id="el-confirm-ok">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js" defer></script>
+  <script src="js/chart.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/icons.js" defer></script>
+  <script src="js/perf-monitor.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
